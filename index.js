@@ -1,12 +1,7 @@
-'use strict';
-
-var ip = require("ip");
-console.dir ( ip.address() );
-
 const express = require('express');
 const socketio = require('socket.io');
 const http = require('http');
-const Sala = require('./newSala');
+const Sala = require('./src/newSala');
 const app = express()
 const server = http.createServer(app);
 const io = new socketio.Server(server, {
