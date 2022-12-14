@@ -1,8 +1,3 @@
-'use strict';
-
-var ip = require("ip");
-console.dir ( ip.address() );
-
 const express = require('express');
 const socketio = require('socket.io');
 const http = require('http');
