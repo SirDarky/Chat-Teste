@@ -1,10 +1,10 @@
 const express = require('express');
-const socketio = require('socket.io');
-const http = require('http');
-const Sala = require('./src/newSala');
+//const socketio = require('socket.io');
+//const http = require('http');
+//const Sala = require('./src/newSala');
 const app = express()
-const server = http.createServer(app);
-const io = new socketio.Server(server, {
+//const server = http.createServer(app);
+/*const io = new socketio.Server(server, {
   cors: {
     origin: '*',
     methods: ["GET", "POST"]
@@ -12,11 +12,12 @@ const io = new socketio.Server(server, {
 });
 
 let salas = []
-
+*/
 app.get('/hello', function (req, res) {
   res.send('hello world')
 })
 
+/*
 io.on('connection', (socket) =>{
   socket.on('conexao', (chat)=>{
     let chatid = Number(chat.chatId);
@@ -56,6 +57,6 @@ io.on('connection', (socket) =>{
     io.to(Number(parou.chat)).emit('parouUser', parou);
   })
 })
-
+*/
 server.listen(process.env.PORT || 8080);
 console.log('Servidor iniciado')
