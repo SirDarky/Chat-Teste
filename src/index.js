@@ -1,21 +1,67 @@
-import express from 'express'
-import { Router } from 'express'
+'use strict';
 
+var ip = require("ip");
+console.dir ( ip.address() );
+
+const express = require('express');
+const socketio = require('socket.io');
+const http = require('http');
+const Sala = require('./newSala');
 const app = express()
+const server = http.createServer(app);
+const io = new socketio.Server(server, {
+  cors: {
+    origin: '*',
+    methods: ["GET", "POST"]
+  }
+});
 
-const route = Router()
+let salas = []
 
-route.get('/', (req, res) => {
-    return res.json({
-        success: true,
-        message: "Sucesso"
-    })
+app.get('/', function(req, res){
+  console.log('chegou')
+  res.send("hello")
 })
 
-app.use(route)
+io.on('connection', (socket) =>{
+  socket.on('conexao', (chat)=>{
+    let chatid = Number(chat.chatId);
+    let author = chat.author;
+    let atendente = chat.atendente;
 
-const port = process.env.PORT || 3000
+    if (!salas[chatid]) {
+      salas[chatid] = new Sala(chatid, author, atendente);
+    }
 
-app.listen(port, () => {
-    console.log('Server running in ' + port)
+    if (!salas[chatid].atendente) {
+      salas[chatid].atendente = atendente;
+    }
+
+    socket.join(chatid)
+  })
+
+  socket.on('sendMessage', data =>{
+    io.to(Number(data.chat_id)).emit('mensagem', data)
+  })
+
+  socket.on('encerrado', data=>{
+    io.to(Number(data.chat_id)).emit('encerrado_client', data)
+    console.log('O chat '+ data.chat_id+' foi encerrado as '+ data.time)
+  })
+
+  socket.on('arquivos', data=>{
+    console.log('Arquivos do chat: ', data)
+    io.to(Number(data)).emit('recebido_arquivo')
+  })
+
+  socket.on('digitando', digitando => {
+    io.to(Number(digitando.chat)).emit('digitandoUser', digitando);
+  })
+
+  socket.on('parou_digitar', parou =>{
+    io.to(Number(parou.chat)).emit('parouUser', parou);
+  })
 })
+
+server.listen(process.env.PORT || 3000);
+console.log('Servidor iniciado')
