@@ -13,9 +13,8 @@ const io = new socketio.Server(server, {
 
 let salas = []
 
-app.get('/', function(req, res){
-  console.log('chegou')
-  res.send("hello")
+app.get('/hello', function (req, res) {
+  res.send('hello world')
 })
 
 io.on('connection', (socket) =>{
